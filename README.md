@@ -10,7 +10,6 @@ npm install gtk-native
 
 ## Usage
 
-
 ```js
 import { multiply } from 'gtk-native';
 
@@ -18,7 +17,6 @@ import { multiply } from 'gtk-native';
 
 const result = await multiply(3, 7);
 ```
-
 
 ## Contributing
 
