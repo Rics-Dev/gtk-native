@@ -6,120 +6,112 @@ interface GtkAppBarProps {
   title?: string;
   type?: 'small' | 'medium' | 'large';
   centered?: boolean;
+  showRuler?: boolean;
   navigationIcon?: React.ReactNode;
   actions?: React.ReactNode[];
+  style?: object;
+  backgroundColor?: string;
+  titleColor?: string;
+  expandedHeight?: number;
 }
 
 export const GtkAppBar: React.FC<GtkAppBarProps> = ({
   title = 'App',
   type = 'small',
-  centered = false,
+  centered = true,
+  showRuler = true,
   navigationIcon,
   actions = [],
+  style = {},
+  backgroundColor = '#f7f7f7',
+  titleColor = '#2E2E33',
+  expandedHeight = 90,
 }) => {
-  const getAppBarHeight = () => {
-    switch (type) {
-      case 'small':
-        return 50;
-      case 'medium':
-        return 70;
-      case 'large':
-        return 90;
-      default:
-        return 50;
-    }
-  };
-
-  const renderNavigationIcon = () => {
-    if (navigationIcon) {
-      return <View style={styles.navIcon}>{navigationIcon}</View>;
-    }
-    return null;
-  };
-
-  const renderActions = () => {
-    return (
-      <View style={styles.actions}>
-        {actions.map((action, index) => (
-          <TouchableOpacity key={index} style={styles.actionIcon}>
-            {action}
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
-
-  // Dynamically compute styles for left and right sections
-  const dynamicStyles = StyleSheet.create({
-    leftSection: {
-      flex: centered ? 1 : 0,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    rightSection: {
-      flex: centered ? 1 : 0,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-  });
+  const height =
+    type === 'large' ? expandedHeight : type === 'medium' ? 70 : 50;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={[styles.appBar, { height: getAppBarHeight() }]}>
-        <View style={dynamicStyles.leftSection}>{renderNavigationIcon()}</View>
-        <Text
-          style={[
-            styles.appBarTitle,
-            centered ? styles.centeredTitle : styles.leftAlignedTitle,
-          ]}
-        >
-          {title}
-        </Text>
-        <View style={dynamicStyles.rightSection}>{renderActions()}</View>
-      </View>
-      <View style={styles.ruler} />
-    </SafeAreaView>
+    <View style={[styles.container]}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+        <View style={[styles.appBar, { height, backgroundColor }, style]}>
+          <View style={[styles.navIcon]}>{navigationIcon}</View>
+          <View
+            style={[
+              styles.titleContainer,
+              centered && styles.centeredTitleContainer,
+            ]}
+          >
+            <Text
+              style={[
+                styles.appBarTitle,
+                { color: titleColor },
+                centered ? styles.centeredTitle : styles.leftAlignedTitle,
+              ]}
+            >
+              {title}
+            </Text>
+          </View>
+          <View style={styles.actions}>
+            {actions.map((action, index) => (
+              <TouchableOpacity key={index} style={styles.actionIcon}>
+                {action}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+        {showRuler && <View style={styles.ruler} />}
+      </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+  },
   safeArea: {
     width: '100%',
-    paddingTop: 0,
   },
   appBar: {
     width: '100%',
-    backgroundColor: '#f7f7f7',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    zIndex: 1000,
+    paddingHorizontal: 8,
   },
   navIcon: {
-    paddingRight: 10,
+    padding: 0,
+    minWidth: 48,
+    alignItems: 'center',
+  },
+  titleContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  centeredTitleContainer: {
+    justifyContent: 'center',
   },
   appBarTitle: {
-    color: '#2E2E33',
     fontSize: 20,
     fontWeight: 'bold',
-    maxWidth: '100%', // Ensure the title doesn't exceed the container width
   },
   centeredTitle: {
     textAlign: 'center',
-    alignSelf: 'center', // Center the text within its container
-    width: 'auto', // Allow width to be determined by content
-    flexShrink: 1, // Allow text to shrink if needed
   },
   leftAlignedTitle: {
     textAlign: 'left',
-    marginLeft: 10,
+    marginLeft: 8,
   },
   actions: {
     flexDirection: 'row',
+    minWidth: 48,
+    justifyContent: 'flex-end',
   },
   actionIcon: {
-    paddingLeft: 10,
+    marginLeft: 8,
   },
   ruler: {
     width: '100%',
