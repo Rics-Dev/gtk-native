@@ -21,7 +21,7 @@ export const GtkIconButton: React.FC<GtkIconButtonProps> = ({
   color = '#000',
   type = 'flat',
   circular = false,
-  backgroundColor = '#E6E6E7',
+  // backgroundColor = '#E6E6E7',
 }) => {
   const isStandard = type === 'raised';
 
@@ -30,8 +30,8 @@ export const GtkIconButton: React.FC<GtkIconButtonProps> = ({
       onPress={onPress}
       style={[
         styles.button,
-        circular && { borderRadius: 50 },
-        isStandard && { backgroundColor },
+        circular && styles.circular,
+        isStandard && styles.raised,
         style,
       ]}
       activeOpacity={0.7}
@@ -49,6 +49,12 @@ const styles = StyleSheet.create({
     padding: 6,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  circular: {
+    borderRadius: 50,
+  },
+  raised: {
+    backgroundColor: '#E6E6E7',
   },
 });
 
